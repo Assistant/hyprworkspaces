@@ -37,6 +37,7 @@ fn main() -> hyprland::Result<()> {
             .ok()
             .and_then(|c| c.into_iter().find(|c| c.address == address))
             && let Some(ws) = workspaces.iter_mut().find(|w| w.id == client.workspace.id)
+            && !ws.active
         {
             ws.urgent = true;
         }
