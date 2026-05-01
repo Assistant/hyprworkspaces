@@ -2,6 +2,8 @@ use hyprland::data::{Client, Clients, Workspaces};
 use hyprland::event_listener::EventListener;
 use hyprland::shared::{HyprData, HyprDataActiveOptional, HyprDataVec};
 use serde::Serialize;
+use std::thread::sleep;
+use std::time::Duration;
 use std::{cell::RefCell, rc::Rc};
 
 #[derive(Serialize, Debug)]
@@ -12,7 +14,12 @@ struct Workspace {
 }
 
 fn main() -> hyprland::Result<()> {
-    let active_window = Client::get_active()?.unwrap();
+    let active_window = loop {
+        if let Ok(Some(window)) = Client::get_active() {
+            break window;
+        }
+        sleep(Duration::from_secs_f32(0.1));
+    };
     let workspaces: Rc<RefCell<Vec<Workspace>>> = Rc::new(RefCell::new({
         let mut ws: Vec<Workspace> = Workspaces::get()?
             .to_vec()
